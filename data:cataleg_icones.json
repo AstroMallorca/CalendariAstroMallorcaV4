@@ -1,0 +1,9 @@
+{
+  "pluja_meteors": { "icona": "assets/icons/special/pluja_meteors.png" },
+  "solstici": { "icona": "assets/icons/special/solstici.png" },
+  "equinocci": { "icona": "assets/icons/special/equinocci.png" },
+  "canvi_horari": { "icona": "assets/icons/special/canvi_horari.png" },
+  "periheli": { "icona": "assets/icons/special/periheli.png" },
+  "afeli": { "icona": "assets/icons/special/afeli.png" },
+  "eclipsi": { "icona": "assets/icons/special/eclipsi.png" }
+}

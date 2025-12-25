@@ -1,6 +1,6 @@
 let efemerides = {};
 
-fetch("/data/efemerides_2026.json")
+fetch("data/efemerides_2026.json")
   .then(r => r.json())
   .then(data => {
     efemerides = data.dies;
