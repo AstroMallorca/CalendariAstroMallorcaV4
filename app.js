@@ -3,7 +3,7 @@
 // === URLs (les teves) ===
 const SHEET_FOTOS_MES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWf6OL8LYzMsBPuxvI_h4s9-0__hru3hWK9D2ewyccoku9ndl2VhZ0GS8P9uEigShJEehsy2UktnY2/pub?gid=0&single=true&output=csv";
 const SHEET_EFEMERIDES = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWf6OL8LYzMsBPuxvI_h4s9-0__hru3hWK9D2ewyccoku9ndl2VhZ0GS8P9uEigShJEehsy2UktnY2/pub?gid=1305356303&single=true&output=csv";
-const SHEET_CONFIG = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWf6OL8LYzMsBPuxvI_h4s9-0__hru3hWK9D2ewyccoku9ndl2VhZ0GS8P9uEigShJEehsy2UktnY2/pub?gid=1324899531&single=true&output=csv";
+const SHEET_CONFIG = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWf6OL8LYzMsBPuxvI_h4s9-0__hru3hWK9D2ewyccoku9ndl2VhZ0GS8P9uEigShJEehsy2UktnY2/pub?gid=1058273430&single=true&output=csv";
 
 // Festius Balears (qualsevol any) — només columna "nom" amb DD-MM-YYYY
 const SHEET_FESTIUS = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSWf6OL8LYzMsBPuxvI_h4s9-0__hru3hWK9D2ewyccoku9ndl2VhZ0GS8P9uEigShJEehsy2UktnY2/pub?output=csv";
@@ -62,19 +62,20 @@ let festius = new Map(); // "YYYY-MM-DD" → "Nom del festiu"
 
 // === Utils dates ===
 function ddmmyyyyToISO(s) {
-  const [dd, mm, yyyy] = (s || "").trim().split("-");
-  if (!dd || !mm || !yyyy) return null;
-  return `${yyyy}-${mm.padStart(2, "0")}-${dd.padStart(2, "0")}`;
-}
-function isoToMonthKey(isoYM) {
-  // isoYM "2026-08" -> "08-2026"
-  return `${isoYM.slice(5,7)}-${isoYM.slice(0,4)}`;
-}
-function actualitzaTitolMes(isoYM){
-  const [y, m] = isoYM.split("-").map(Number);
-  const nom = `${MESOS_CA[m-1]} ${y}`;
-  const el = document.getElementById("titolMes");
-  if (el) el.textContent = nom.toUpperCase();
+  if (s == null) return null;
+
+  // Neteja espais, tabs i caràcters raros (NBSP)
+  const clean = String(s).replace(/\u00A0/g, " ").trim();
+
+  // Accepta DD-MM-YYYY o DD/MM/YYYY
+  const m = clean.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+  if (!m) return null;
+
+  const dd = m[1].padStart(2, "0");
+  const mm = m[2].padStart(2, "0");
+  const yyyy = m[3];
+
+  return `${yyyy}-${mm}-${dd}`;
 }
 
 // === CSV parser (quotes + commas) ===
