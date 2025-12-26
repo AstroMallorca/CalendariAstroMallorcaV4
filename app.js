@@ -227,21 +227,30 @@ const contingutDia = document.getElementById("contingutDia");
 const botoNocturn = document.getElementById("toggleNocturn");
 
 function setFotoMes(isoYM) {
-  const key = isoToMonthKey(isoYM); // MM-YYYY
+  const key = isoToMonthKey(isoYM); // "MM-YYYY"
   const f = fotosMes[key];
 
   const img = document.getElementById("imgFotoMes");
   const titol = document.getElementById("titolFoto");
 
-  // si no hi ha dades del sheet, no trenquem res
-  if (!f) {
-    titol.textContent = "";
-    return;
-  }
+  // fallback per defecte (si no hi ha dades al Sheet)
+  const fallbackPath = `assets/months/2026/${isoYM}.png`;
 
-  if (f.imatge) img.src = f.imatge;      // ruta del sheet (relativa al repo)
-  titol.textContent = f.titol || "";
-  img.onclick = () => obreModalDetallFoto(f);
+  // Imatge: Sheet > fallback
+  const src = (f && f.imatge) ? f.imatge : fallbackPath;
+  img.src = src;
+
+  // Títol: Sheet o buit
+  titol.textContent = (f && f.titol) ? f.titol : "";
+
+  // Click per obrir detall només si hi ha dades del Sheet
+  img.onclick = (f ? () => obreModalDetallFoto(f) : null);
+
+  // Si el fallback no existeix, posa una imatge per defecte (opcional)
+  img.onerror = () => {
+    img.onerror = null;
+    img.src = "assets/months/2026/default.png"; // crea aquesta imatge si vols
+  };
 }
 
 function obreModalDetallFoto(f) {
@@ -446,16 +455,6 @@ async function inicia() {
 inicia();
 
 // Registre SW (si el tens)
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", async () => {
-    try {
-      await navigator.serviceWorker.register("sw.js");
-      console.log("✅ Service Worker registrat");
-    } catch (e) {
-      console.warn("⚠️ No s'ha pogut registrar el Service Worker", e);
-    }
-  });
-}
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.addEventListener("controllerchange", () => {
     // Quan el nou SW pren control, recarregam una vegada per aplicar el nou codi/assets
