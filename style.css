@@ -62,6 +62,20 @@ body{
   letter-spacing: 1px;
   font-size: 18px;
 }
+/* Text sota la foto: títol — autor */
+#titolFoto{
+  margin: 10px 12px 0 12px;
+  font-size: 18px;
+}
+
+/* Icona petita d'AstroMallorca a la graella */
+.am-mini{
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  display: inline-block;
+}
+
 
 /* DIES DE LA SETMANA */
 .dies-setmana{
