@@ -132,4 +132,88 @@ body.nocturn .badge{
   box-shadow: none !important;
   cursor: default;
 }
+/* TÍTOL DEL MES */
+.mes-bar{
+  padding: 10px 0 6px 0;
+}
+.titol-mes{
+  text-align: center;
+  font-weight: 800;
+  letter-spacing: 1px;
+  font-size: 18px;
+}
+
+/* DIES DE LA SETMANA */
+.dies-setmana{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  padding: 0 0 6px 0;
+}
+.dies-setmana div{
+  text-align: center;
+  font-weight: 700;
+  font-size: 12px;
+  opacity: 0.65;
+  padding: 6px 0;
+}
+
+/* GRAELLA SENSE SEPARACIÓ */
+.graella{
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;                 /* ← sense separació */
+  padding: 0 0 16px 0;    /* ← sense marges laterals */
+}
+
+/* CASELLA QUADRADA */
+.dia{
+  border-radius: 0;       /* ← quadrat */
+  min-height: 54px;
+  background: #f1f1f1;
+  padding: 6px;
+  display:flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border: 1px solid rgba(0,0,0,0.05); /* línia fina tipus calendari */
+  box-sizing: border-box;
+}
+
+/* buits abans del dia 1 */
+.dia.buit{
+  background: transparent !important;
+  border: 1px solid rgba(0,0,0,0.03);
+}
+
+/* número del dia */
+.dia .num{
+  font-weight: 800;
+  font-size: 16px;
+}
+
+/* badges */
+.badges{
+  display:flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.badge{
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.08);
+}
+
+/* mode nocturn coherent */
+body.nocturn .dia{
+  background:#120000;
+  border-color: rgba(255,68,68,0.10);
+  color:#ff4444;
+}
+body.nocturn .dies-setmana div{
+  opacity: 0.85;
+}
+body.nocturn .badge{
+  background: rgba(255,68,68,0.18);
+}
 
