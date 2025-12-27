@@ -93,6 +93,81 @@ function ddmmyyyyToISO(s) {
 
   return `${yyyy}-${mm}-${dd}`;
 }
+// === Compte enrere eclipsi (Europe/Madrid, DST inclòs) ===
+const ECLIPSI_TZ = "Europe/Madrid";
+const ECLIPSI_LOCAL = { year: 2026, month: 8, day: 12, hour: 20, minute: 31 };
+
+function getTimeZoneOffsetMinutes(date, timeZone) {
+  // Retorna offset (minuts) de timeZone respecte UTC en aquell instant
+  const dtf = new Intl.DateTimeFormat("en-US", {
+    timeZone,
+    year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit",
+    hour12: false
+  });
+
+  const parts = dtf.formatToParts(date);
+  const map = {};
+  for (const p of parts) map[p.type] = p.value;
+
+  // data/hora "com si" fos UTC
+  const asUTC = Date.UTC(
+    Number(map.year),
+    Number(map.month) - 1,
+    Number(map.day),
+    Number(map.hour),
+    Number(map.minute),
+    Number(map.second)
+  );
+
+  // offset = (hora en tz expressada com UTC) - UTC real
+  return (asUTC - date.getTime()) / 60000;
+}
+
+function zonedDateTimeToUtcMs({year, month, day, hour, minute}, timeZone) {
+  // Estimació inicial
+  let utc = Date.UTC(year, month - 1, day, hour, minute, 0);
+  // Ajust 1
+  let off = getTimeZoneOffsetMinutes(new Date(utc), timeZone);
+  utc -= off * 60000;
+  // Ajust 2 (per seguretat a canvis DST)
+  off = getTimeZoneOffsetMinutes(new Date(utc), timeZone);
+  utc -= off * 60000;
+  return utc;
+}
+
+const ECLIPSI_UTC_MS = zonedDateTimeToUtcMs(ECLIPSI_LOCAL, ECLIPSI_TZ);
+
+function formatCountdownDDHHMM(ms) {
+  if (ms <= 0) return "00D:00H:00M";
+
+  const totalMinutes = Math.floor(ms / 60000);
+  const days = Math.floor(totalMinutes / (60 * 24));
+  const hours = Math.floor((totalMinutes - days * 60 * 24) / 60);
+  const minutes = totalMinutes - days * 60 * 24 - hours * 60;
+
+  const D = String(days).padStart(2, "0");
+  const H = String(hours).padStart(2, "0");
+  const M = String(minutes).padStart(2, "0");
+  return `${D}D:${H}H:${M}M`;
+}
+
+let countdownTimer = null;
+
+function iniciaCompteEnrereEclipsi() {
+  const el = document.getElementById("eclipsiCountdown");
+  if (!el) return;
+
+  const tick = () => {
+    const now = Date.now(); // hora del sistema
+    const diff = ECLIPSI_UTC_MS - now;
+    el.textContent = formatCountdownDDHHMM(diff);
+  };
+
+  tick();
+  if (countdownTimer) clearInterval(countdownTimer);
+  countdownTimer = setInterval(tick, 30000); // cada 30s és suficient (mostram minuts)
+}
 
 // ✅ Helper: "2026-08" -> "08-2026"
 function isoToMonthKey(isoYM) {
