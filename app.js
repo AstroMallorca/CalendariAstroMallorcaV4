@@ -139,14 +139,29 @@ function parseCSV(text) {
 }
 
 // ✅ Millora: capçaleres normalitzades (evita espais/majúscules)
+function normalizeHeader(h) {
+  return (h || "")
+    .trim()
+    .toLowerCase()
+    // treu accents (títol -> titol)
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    // espais i guions -> _
+    .replace(/[\s-]+/g, "_")
+    // deixa només a-z0-9_
+    .replace(/[^a-z0-9_]/g, "");
+}
+
 function rowsToObjects(rows) {
   if (!rows.length) return [];
-  const header = rows[0].map(h => (h || "").trim().toLowerCase());
+  const header = rows[0].map(normalizeHeader);
+
   return rows.slice(1)
     .filter(r => r.some(x => (x || "").trim() !== ""))
     .map(r => {
       const obj = {};
-      header.forEach((h, idx) => obj[h] = (r[idx] ?? "").trim());
+      header.forEach((h, idx) => {
+        obj[h] = (r[idx] ?? "").trim();
+      });
       return obj;
     });
 }
